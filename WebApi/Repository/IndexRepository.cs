@@ -1,0 +1,96 @@
+﻿using Microsoft.EntityFrameworkCore;
+using WebApi.Data.Context;
+using WebApi.Models;
+
+namespace WebApi.Repository
+{
+    public class IndexRepository : IIndexRepository<HrIndex>
+    {
+        private readonly DexefdbSampleContext _dbContext;
+
+        public IndexRepository(DexefdbSampleContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+
+        public async Task<IEnumerable<HrIndex>?> GetAllAsync()
+        {
+            return await _dbContext.HrIndices.ToListAsync();
+        }
+
+        public async Task<HrIndex?> GetByIdAsync(int id)
+        {
+          var index = await _dbContext.Set<HrIndex>().FindAsync(id);
+          return index;
+        }
+
+        public async Task<HrIndex> AddAsync(HrIndex entity)
+        {
+            if(entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+            else
+            {
+                var index = _dbContext.Set<HrIndex>().Add(entity);
+                await _dbContext.SaveChangesAsync();
+                return index.Entity;
+            }                 
+        }
+
+
+
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var index = await GetByIdAsync(id);
+            if(index == null)
+            {
+                return false;
+            }
+            else
+            {
+                try
+                {
+                    _dbContext.Set<HrIndex>().Remove(index);
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch(Exception ex)
+                {
+                    return false;
+                }
+              
+            }
+        }
+
+   
+
+        public async Task<bool> UpdateAsync(HrIndex entity)
+        {
+            var index = await GetByIdAsync(entity.Id);
+            if (index == null)
+            {
+                return false;
+            }
+            else
+            {
+               try
+
+                {
+
+                    index.ArName = entity.ArName;
+                    index.EnName = entity.EnName;
+                    index.FrName = entity.FrName;
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
+        }
+    }
+}

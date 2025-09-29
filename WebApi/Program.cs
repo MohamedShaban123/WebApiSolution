@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.Controllers;
 using WebApi.Data.Context;
+using WebApi.Models;
+using WebApi.Repository;
 
 namespace WebApi
 {
@@ -18,7 +20,8 @@ namespace WebApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<DexefdbSampleContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+               options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<IIndexRepository<HrIndex>, IndexRepository>();
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             // Configure the HTTP request pipeline.

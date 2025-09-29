@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data.Context;
+using WebApi.Dtos;
 using WebApi.Models;
+using WebApi.Repository;
 
 namespace WebApi.Controllers
 {
@@ -14,32 +17,47 @@ namespace WebApi.Controllers
     [ApiController]
     public class CustomHRIndex : ControllerBase
     {
-        private readonly DexefdbSampleContext _context;
+        private readonly IIndexRepository<HrIndex> _indexRepository;
 
-        public CustomHRIndex(DexefdbSampleContext context)
+        public CustomHRIndex( IIndexRepository<HrIndex> indexRepository)
         {
-            _context = context;
+            _indexRepository = indexRepository;
         }
 
         // GET: api/CustomHRIndex
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HrIndex>>> GetHrIndices()
+        public async Task<ActionResult<IEnumerable<HrIndexDto>>> GetHrIndices()
         {
-            return await _context.HrIndices.ToListAsync();
+           var indices = await _indexRepository.GetAllAsync();
+            if (indices == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var dtoList = indices.Select(i => new HrIndexDto
+                {
+                    Id = i.Id,
+                    arName = i.ArName,
+                    enName = i.EnName
+                }).ToList();
+                return Ok(dtoList);
+            }
+         
         }
 
         // GET: api/CustomHRIndex/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<HrIndex>> GetHrIndex(int id)
+        public async Task<ActionResult<HrIndexDto>> GetHrIndex(int id)
         {
-            var hrIndex = await _context.HrIndices.FindAsync(id);
-
-            if (hrIndex == null)
-            {
+            var index = await _indexRepository.GetByIdAsync(id);
+            if(index == null)
                 return NotFound();
-            }
+            else
+            {
 
-            return hrIndex;
+                return Ok(new HrIndexDto { Id=index.Id,arName=index.ArName,enName=index.EnName});
+            }
         }
 
         // PUT: api/CustomHRIndex/5
@@ -51,58 +69,38 @@ namespace WebApi.Controllers
             {
                 return BadRequest();
             }
-
-            _context.Entry(hrIndex).State = EntityState.Modified;
-
-            try
+            else
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!HrIndexExists(id))
-                {
+              var isUpdate =  await _indexRepository.UpdateAsync(hrIndex);
+              if(isUpdate)             
+                    return Ok();
+             
+                else 
                     return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
             }
-
-            return NoContent();
         }
 
         // POST: api/CustomHRIndex
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<HrIndex>> PostHrIndex(HrIndex hrIndex)
         {
-            _context.HrIndices.Add(hrIndex);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetHrIndex", new { id = hrIndex.Id }, hrIndex);
+           var index = await _indexRepository.AddAsync(hrIndex);
+            if (index == null)
+                return NoContent();
+            else
+                return Ok(index);
         }
 
         // DELETE: api/CustomHRIndex/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHrIndex(int id)
         {
-            var hrIndex = await _context.HrIndices.FindAsync(id);
-            if (hrIndex == null)
-            {
-                return NotFound();
-            }
+           var isDelete = await _indexRepository.DeleteAsync(id);
+            if(isDelete)
+                return Ok();
+            else 
+                return NoContent();
+        }  
 
-            _context.HrIndices.Remove(hrIndex);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool HrIndexExists(int id)
-        {
-            return _context.HrIndices.Any(e => e.Id == id);
-        }
     }
 }
