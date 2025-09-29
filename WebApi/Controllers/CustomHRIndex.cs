@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Drawing.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data.Context;
 using WebApi.Dtos;
+using WebApi.Errors;
 using WebApi.Models;
 using WebApi.Repository;
 
@@ -26,12 +29,21 @@ namespace WebApi.Controllers
 
         // GET: api/CustomHRIndex
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HrIndexDto>>> GetHrIndices()
+        public async Task<ActionResult<ApiResponse<IEnumerable<HrIndexDto>>>> GetHrIndices()
         {
-           var indices = await _indexRepository.GetAllAsync();
+            ApiResponse<IEnumerable<HrIndexDto>> result = new ApiResponse<IEnumerable< HrIndexDto>>();
+
+            var indices = await _indexRepository.GetAllAsync();
             if (indices == null)
             {
-                return NotFound();
+                result.IsSuccess = false;
+                result.StatusCode = 404;
+                result.Message = "HR_Index is empty";
+                result.Details = string.Empty;
+                result.Date = DateTime.Now;
+                result.Data =null;
+                return Ok(result);
+               
             }
             else
             {
@@ -41,7 +53,15 @@ namespace WebApi.Controllers
                     arName = i.ArName,
                     enName = i.EnName
                 }).ToList();
-                return Ok(dtoList);
+
+                result.IsSuccess = true;
+                result.StatusCode = 200;
+                result.Message = string.Empty;
+                result.Details = string.Empty;
+                result.Date = DateTime.Now;
+                result.Data = dtoList;
+                return Ok(result);
+
             }
          
         }
@@ -50,13 +70,28 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<HrIndexDto>> GetHrIndex(int id)
         {
+            ApiResponse<HrIndexDto> result = new ApiResponse<HrIndexDto>();
             var index = await _indexRepository.GetByIdAsync(id);
             if(index == null)
-                return NotFound();
+            {
+                result.IsSuccess = false;
+                result.StatusCode = 404;
+                result.Message = "Id not exist ";
+                result.Details = string.Empty;
+                result.Date = DateTime.Now;
+                result.Data = null;
+                return Ok(result);
+            }
             else
             {
+                result.IsSuccess = true;
+                result.StatusCode = 200;
+                result.Message = string.Empty;
+                result.Details = string.Empty;
+                result.Date = DateTime.Now;
+                result.Data = new HrIndexDto { Id=index.Id,arName=index.ArName,enName=index.EnName} ;
+                return Ok(result);
 
-                return Ok(new HrIndexDto { Id=index.Id,arName=index.ArName,enName=index.EnName});
             }
         }
 
@@ -65,18 +100,42 @@ namespace WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutHrIndex(int id, HrIndex hrIndex)
         {
+            ApiResponse<HrIndex> result = new ApiResponse<HrIndex>();
+
             if (id != hrIndex.Id)
             {
-                return BadRequest();
+                result.IsSuccess = false;
+                result.StatusCode = 404;
+                result.Message = "Id not match id of model";
+                result.Details = string.Empty;
+                result.Date = DateTime.Now;
+                result.Data = null;
+                return Ok(result);
             }
             else
             {
               var isUpdate =  await _indexRepository.UpdateAsync(hrIndex);
-              if(isUpdate)             
-                    return Ok();
-             
-                else 
-                    return NotFound();
+                if (isUpdate)
+                {
+                    result.IsSuccess = true;
+                    result.StatusCode = 200;
+                    result.Message = string.Empty;
+                    result.Details = string.Empty;
+                    result.Date = DateTime.Now;
+                    result.Data = hrIndex;
+                    return Ok(result);
+                }
+
+                else
+                {
+                    result.IsSuccess =false;
+                    result.StatusCode = 500;
+                    result.Message = string.Empty;
+                    result.Details = string.Empty;
+                    result.Date = DateTime.Now;
+                    result.Data = null;
+                    return Ok(result);
+                }
             }
         }
 
@@ -84,22 +143,56 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<HrIndex>> PostHrIndex(HrIndex hrIndex)
         {
-           var index = await _indexRepository.AddAsync(hrIndex);
+            ApiResponse<HrIndex> result = new ApiResponse<HrIndex>();
+            var index = await _indexRepository.AddAsync(hrIndex);
             if (index == null)
-                return NoContent();
+            {
+                result.IsSuccess = false;
+                result.StatusCode = 500;
+                result.Message = string.Empty;
+                result.Details = string.Empty;
+                result.Date = DateTime.Now;
+                result.Data = null;
+                return Ok(result);
+            }
             else
-                return Ok(index);
+            {
+                result.IsSuccess = true;
+                result.StatusCode = 200;
+                result.Message = string.Empty;
+                result.Details = string.Empty;
+                result.Date = DateTime.Now;
+                result.Data = index;
+                return Ok(result);
+            }
         }
 
         // DELETE: api/CustomHRIndex/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHrIndex(int id)
         {
-           var isDelete = await _indexRepository.DeleteAsync(id);
+            ApiResponse<HrIndex> result = new ApiResponse<HrIndex>();
+            var isDelete = await _indexRepository.DeleteAsync(id);
             if(isDelete)
-                return Ok();
-            else 
-                return NoContent();
+            {
+                result.IsSuccess = true;
+                result.StatusCode = 200;
+                result.Message = string.Empty;
+                result.Details = string.Empty;
+                result.Date = DateTime.Now;
+                result.Data =null;
+                return Ok(result);
+            }
+            else
+            {
+                result.IsSuccess = false;
+                result.StatusCode = 500;
+                result.Message = string.Empty;
+                result.Details = string.Empty;
+                result.Date = DateTime.Now;
+                result.Data = null;
+                return Ok(result);
+            }
         }  
 
     }
