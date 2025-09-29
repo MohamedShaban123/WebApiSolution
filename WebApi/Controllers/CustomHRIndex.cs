@@ -36,12 +36,12 @@ namespace WebApi.Controllers
             var indices = await _indexRepository.GetAllAsync();
             if (indices == null)
             {
-                result.IsSuccess = false;
-                result.StatusCode = 404;
-                result.Message = "HR_Index is empty";
-                result.Details = string.Empty;
-                result.Date = DateTime.Now;
-                result.Data =null;
+                //result.IsSuccess = false;
+                //result.StatusCode = 404;
+                //result.Message = "HR_Index is empty";
+                //result.Details = string.Empty;
+                //result.Date = DateTime.Now;
+                //result.Data =null;
                 return Ok(result);
                
             }
@@ -54,12 +54,12 @@ namespace WebApi.Controllers
                     enName = i.EnName
                 }).ToList();
 
-                result.IsSuccess = true;
-                result.StatusCode = 200;
-                result.Message = string.Empty;
-                result.Details = string.Empty;
-                result.Date = DateTime.Now;
-                result.Data = dtoList;
+                //result.IsSuccess = true;
+                //result.StatusCode = 200;
+                //result.Message = string.Empty;
+                //result.Details = string.Empty;
+                //result.Date = DateTime.Now;
+                //result.Data = dtoList;
                 return Ok(result);
 
             }
@@ -74,22 +74,22 @@ namespace WebApi.Controllers
             var index = await _indexRepository.GetByIdAsync(id);
             if(index == null)
             {
-                result.IsSuccess = false;
-                result.StatusCode = 404;
-                result.Message = "Id not exist ";
-                result.Details = string.Empty;
-                result.Date = DateTime.Now;
-                result.Data = null;
+                //result.IsSuccess = false;
+                //result.StatusCode = 404;
+                //result.Message = "Id not exist ";
+                //result.Details = string.Empty;
+                //result.Date = DateTime.Now;
+                //result.Data = null;
                 return Ok(result);
             }
             else
             {
-                result.IsSuccess = true;
-                result.StatusCode = 200;
-                result.Message = string.Empty;
-                result.Details = string.Empty;
-                result.Date = DateTime.Now;
-                result.Data = new HrIndexDto { Id=index.Id,arName=index.ArName,enName=index.EnName} ;
+                //result.IsSuccess = true;
+                //result.StatusCode = 200;
+                //result.Message = string.Empty;
+                //result.Details = string.Empty;
+                //result.Date = DateTime.Now;
+                //result.Data = new HrIndexDto { Id=index.Id,arName=index.ArName,enName=index.EnName} ;
                 return Ok(result);
 
             }
@@ -104,12 +104,12 @@ namespace WebApi.Controllers
 
             if (id != hrIndex.Id)
             {
-                result.IsSuccess = false;
-                result.StatusCode = 404;
-                result.Message = "Id not match id of model";
-                result.Details = string.Empty;
-                result.Date = DateTime.Now;
-                result.Data = null;
+                //result.IsSuccess = false;
+                //result.StatusCode = 404;
+                //result.Message = "Id not match id of model";
+                //result.Details = string.Empty;
+                //result.Date = DateTime.Now;
+                //result.Data = null;
                 return Ok(result);
             }
             else
@@ -117,23 +117,23 @@ namespace WebApi.Controllers
               var isUpdate =  await _indexRepository.UpdateAsync(hrIndex);
                 if (isUpdate)
                 {
-                    result.IsSuccess = true;
-                    result.StatusCode = 200;
-                    result.Message = string.Empty;
-                    result.Details = string.Empty;
-                    result.Date = DateTime.Now;
-                    result.Data = hrIndex;
+                    //result.IsSuccess = true;
+                    //result.StatusCode = 200;
+                    //result.Message = string.Empty;
+                    //result.Details = string.Empty;
+                    //result.Date = DateTime.Now;
+                    //result.Data = hrIndex;
                     return Ok(result);
                 }
 
                 else
                 {
-                    result.IsSuccess =false;
-                    result.StatusCode = 500;
-                    result.Message = string.Empty;
-                    result.Details = string.Empty;
-                    result.Date = DateTime.Now;
-                    result.Data = null;
+                    //result.IsSuccess =false;
+                    //result.StatusCode = 500;
+                    //result.Message = string.Empty;
+                    //result.Details = string.Empty;
+                    //result.Date = DateTime.Now;
+                    //result.Data = null;
                     return Ok(result);
                 }
             }
@@ -147,22 +147,22 @@ namespace WebApi.Controllers
             var index = await _indexRepository.AddAsync(hrIndex);
             if (index == null)
             {
-                result.IsSuccess = false;
-                result.StatusCode = 500;
-                result.Message = string.Empty;
-                result.Details = string.Empty;
-                result.Date = DateTime.Now;
-                result.Data = null;
+                //result.IsSuccess = false;
+                //result.StatusCode = 500;
+                //result.Message = string.Empty;
+                //result.Details = string.Empty;
+                //result.Date = DateTime.Now;
+                //result.Data = null;
                 return Ok(result);
             }
             else
             {
-                result.IsSuccess = true;
-                result.StatusCode = 200;
-                result.Message = string.Empty;
-                result.Details = string.Empty;
-                result.Date = DateTime.Now;
-                result.Data = index;
+                //result.IsSuccess = true;
+                //result.StatusCode = 200;
+                //result.Message = string.Empty;
+                //result.Details = string.Empty;
+                //result.Date = DateTime.Now;
+                //result.Data = index;
                 return Ok(result);
             }
         }
@@ -175,22 +175,22 @@ namespace WebApi.Controllers
             var isDelete = await _indexRepository.DeleteAsync(id);
             if(isDelete)
             {
-                result.IsSuccess = true;
-                result.StatusCode = 200;
-                result.Message = string.Empty;
-                result.Details = string.Empty;
-                result.Date = DateTime.Now;
-                result.Data =null;
+                //result.IsSuccess = true;
+                //result.StatusCode = 200;
+                //result.Message = string.Empty;
+                //result.Details = string.Empty;
+                //result.Date = DateTime.Now;
+                //result.Data =null;
                 return Ok(result);
             }
             else
             {
-                result.IsSuccess = false;
-                result.StatusCode = 500;
-                result.Message = string.Empty;
-                result.Details = string.Empty;
-                result.Date = DateTime.Now;
-                result.Data = null;
+                //result.IsSuccess = false;
+                //result.StatusCode = 500;
+                //result.Message = string.Empty;
+                //result.Details = string.Empty;
+                //result.Date = DateTime.Now;
+                //result.Data = null;
                 return Ok(result);
             }
         }  

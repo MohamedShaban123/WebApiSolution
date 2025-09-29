@@ -25,17 +25,27 @@ namespace WebApi.Repository
           return index;
         }
 
+
+
         public async Task<HrIndex> AddAsync(HrIndex entity)
         {
             if(entity == null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
+
             else
             {
-                var index = _dbContext.Set<HrIndex>().Add(entity);
-                await _dbContext.SaveChangesAsync();
-                return index.Entity;
+                try
+                {
+                    var index = _dbContext.Set<HrIndex>().Add(entity);
+                    await _dbContext.SaveChangesAsync();
+                    return index.Entity;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
             }                 
         }
 
@@ -51,16 +61,16 @@ namespace WebApi.Repository
             }
             else
             {
-                try
-                {
-                    _dbContext.Set<HrIndex>().Remove(index);
-                    await _dbContext.SaveChangesAsync();
-                    return true;
-                }
-                catch(Exception ex)
-                {
-                    return false;
-                }
+                    try
+                    {
+                        _dbContext.Set<HrIndex>().Remove(index);
+                        await _dbContext.SaveChangesAsync();
+                        return true;
+                    }
+                    catch(Exception ex)
+                    {
+                        throw;
+                    }
               
             }
         }
@@ -76,20 +86,22 @@ namespace WebApi.Repository
             }
             else
             {
-               try
+                    try
 
-                {
+                    {
 
-                    index.ArName = entity.ArName;
-                    index.EnName = entity.EnName;
-                    index.FrName = entity.FrName;
-                    await _dbContext.SaveChangesAsync();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    return false;
-                }
+                        index.ArName = entity.ArName;
+                        index.EnName = entity.EnName;
+                        index.FrName = entity.FrName;
+                        await _dbContext.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+
+
             }
         }
     }
