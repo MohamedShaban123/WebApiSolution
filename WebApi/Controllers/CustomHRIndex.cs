@@ -22,7 +22,7 @@ namespace WebApi.Controllers
     {
         private readonly IIndexRepository<HrIndex> _indexRepository;
 
-        public CustomHRIndex( IIndexRepository<HrIndex> indexRepository)
+        public CustomHRIndex(IIndexRepository<HrIndex> indexRepository)
         {
             _indexRepository = indexRepository;
         }
@@ -31,39 +31,19 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<HrIndexDto>>>> GetHrIndices()
         {
-            ApiResponse<IEnumerable<HrIndexDto>> result = new ApiResponse<IEnumerable< HrIndexDto>>();
-
+            ApiResponse<IEnumerable<HrIndexDto>> result = new ApiResponse<IEnumerable<HrIndexDto>>();
             var indices = await _indexRepository.GetAllAsync();
-            if (indices == null)
+            var dtoList = indices.Select(i => new HrIndexDto
             {
-                //result.IsSuccess = false;
-                //result.StatusCode = 404;
-                //result.Message = "HR_Index is empty";
-                //result.Details = string.Empty;
-                //result.Date = DateTime.Now;
-                //result.Data =null;
-                return Ok(result);
-               
-            }
-            else
-            {
-                var dtoList = indices.Select(i => new HrIndexDto
-                {
-                    Id = i.Id,
-                    arName = i.ArName,
-                    enName = i.EnName
-                }).ToList();
-
-                //result.IsSuccess = true;
-                //result.StatusCode = 200;
-                //result.Message = string.Empty;
-                //result.Details = string.Empty;
-                //result.Date = DateTime.Now;
-                //result.Data = dtoList;
-                return Ok(result);
-
-            }
-         
+                Id = i.Id,
+                arName = i.ArName,
+                enName = i.EnName
+            }).ToList();
+            result.IsSuccess = true;
+            result.Message = "Success";
+            result.Data = dtoList;
+            result.Errors = new List<ApiError>();
+            return Ok(result);
         }
 
         // GET: api/CustomHRIndex/5
@@ -72,26 +52,24 @@ namespace WebApi.Controllers
         {
             ApiResponse<HrIndexDto> result = new ApiResponse<HrIndexDto>();
             var index = await _indexRepository.GetByIdAsync(id);
-            if(index == null)
+            if (index == null)
             {
-                //result.IsSuccess = false;
-                //result.StatusCode = 404;
-                //result.Message = "Id not exist ";
-                //result.Details = string.Empty;
-                //result.Date = DateTime.Now;
-                //result.Data = null;
+                result.IsSuccess = false;
+                result.Message = "id not found";
+                result.Data = null;
+                result.Errors = new List<ApiError>()
+                  {
+                    new ApiError(){StatusCode=404,Message=$"HR_Index not found with id {id}"}
+                  };
                 return Ok(result);
             }
             else
             {
-                //result.IsSuccess = true;
-                //result.StatusCode = 200;
-                //result.Message = string.Empty;
-                //result.Details = string.Empty;
-                //result.Date = DateTime.Now;
-                //result.Data = new HrIndexDto { Id=index.Id,arName=index.ArName,enName=index.EnName} ;
+                result.IsSuccess = true;
+                result.Message = "id already exist";
+                result.Data = new HrIndexDto { Id=index.Id,arName=index.ArName,enName=index.EnName};
+                result.Errors = new List<ApiError>();
                 return Ok(result);
-
             }
         }
 
@@ -104,38 +82,24 @@ namespace WebApi.Controllers
 
             if (id != hrIndex.Id)
             {
-                //result.IsSuccess = false;
-                //result.StatusCode = 404;
-                //result.Message = "Id not match id of model";
-                //result.Details = string.Empty;
-                //result.Date = DateTime.Now;
-                //result.Data = null;
+                result.IsSuccess = false;
+                result.Message = "Bad request";
+                result.Data = null;
+                result.Errors = new List<ApiError> { new ApiError { StatusCode = 400, Message = $"Bad request", Details = $"The ID in the URL ({id}) does not match the ID in the body ({hrIndex.Id})." } };
                 return Ok(result);
             }
             else
             {
-              var isUpdate =  await _indexRepository.UpdateAsync(hrIndex);
+                var isUpdate = await _indexRepository.UpdateAsync(hrIndex);
                 if (isUpdate)
                 {
-                    //result.IsSuccess = true;
-                    //result.StatusCode = 200;
-                    //result.Message = string.Empty;
-                    //result.Details = string.Empty;
-                    //result.Date = DateTime.Now;
-                    //result.Data = hrIndex;
-                    return Ok(result);
+                    result.IsSuccess = true;
+                    result.Message = "updated successfully";
+                    result.Data = null;
+                    result.Errors = new List<ApiError>();
+                    
                 }
-
-                else
-                {
-                    //result.IsSuccess =false;
-                    //result.StatusCode = 500;
-                    //result.Message = string.Empty;
-                    //result.Details = string.Empty;
-                    //result.Date = DateTime.Now;
-                    //result.Data = null;
-                    return Ok(result);
-                }
+                return Ok(result);
             }
         }
 
@@ -147,22 +111,18 @@ namespace WebApi.Controllers
             var index = await _indexRepository.AddAsync(hrIndex);
             if (index == null)
             {
-                //result.IsSuccess = false;
-                //result.StatusCode = 500;
-                //result.Message = string.Empty;
-                //result.Details = string.Empty;
-                //result.Date = DateTime.Now;
-                //result.Data = null;
+                result.IsSuccess = false;
+                result.Message = "Problem occured while add hrIndex";
+                result.Data=null;
+                result.Errors = new List<ApiError>() { new ApiError { StatusCode=400,Message="bad request",Details="check you match validation or not"} };
                 return Ok(result);
             }
             else
             {
-                //result.IsSuccess = true;
-                //result.StatusCode = 200;
-                //result.Message = string.Empty;
-                //result.Details = string.Empty;
-                //result.Date = DateTime.Now;
-                //result.Data = index;
+                result.IsSuccess = true;
+                result.Message = "add successfully";
+                result.Data = index;
+                result.Errors = new List<ApiError>();
                 return Ok(result);
             }
         }
@@ -171,29 +131,25 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHrIndex(int id)
         {
-            ApiResponse<HrIndex> result = new ApiResponse<HrIndex>();
+            ApiResponse<HrIndexDto> result = new ApiResponse<HrIndexDto>();
             var isDelete = await _indexRepository.DeleteAsync(id);
-            if(isDelete)
+            if (isDelete)
             {
-                //result.IsSuccess = true;
-                //result.StatusCode = 200;
-                //result.Message = string.Empty;
-                //result.Details = string.Empty;
-                //result.Date = DateTime.Now;
-                //result.Data =null;
+                result.IsSuccess = true;
+                result.Message = "delete successfully";
+                result.Data = null;
+                result.Errors = new List<ApiError>();
                 return Ok(result);
             }
             else
             {
-                //result.IsSuccess = false;
-                //result.StatusCode = 500;
-                //result.Message = string.Empty;
-                //result.Details = string.Empty;
-                //result.Date = DateTime.Now;
-                //result.Data = null;
+                result.IsSuccess = false;
+                result.Message = "id not exist";
+                result.Data = null;
+                result.Errors = new List<ApiError>() { new ApiError { StatusCode = 404, Message = "id not exist", Details = "id not exist " } };
                 return Ok(result);
             }
-        }  
+        }
 
     }
 }
