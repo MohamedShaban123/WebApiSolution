@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.Controllers;
 using WebApi.Data.Context;
+using WebApi.Middlwares;
 using WebApi.Models;
 using WebApi.Repository;
 
@@ -34,7 +35,6 @@ namespace WebApi
                     c.RoutePrefix = string.Empty; // 👈 ده معناه Swagger UI يفتح على "/"
                 });
             }
-
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -42,13 +42,9 @@ namespace WebApi
             }
             ;
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
+            app.UseMiddleware<ExceptionMiddleware>();
             app.MapControllers();
-
-
             app.Run();
         }
     }

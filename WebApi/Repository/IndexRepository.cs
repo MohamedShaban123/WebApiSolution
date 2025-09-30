@@ -89,7 +89,6 @@ namespace WebApi.Repository
                     try
 
                     {
-
                         index.ArName = entity.ArName;
                         index.EnName = entity.EnName;
                         index.FrName = entity.FrName;
@@ -100,7 +99,6 @@ namespace WebApi.Repository
                     {
                         throw;
                     }
-
 
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using WebApi.Errors;
 
 namespace WebApi.Middlwares
 {
@@ -18,29 +19,37 @@ namespace WebApi.Middlwares
         {
             try
             {
-                await _next(context); // go to the next middleware / controller
+                await _next(context);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unhandled exception occurred!");
-
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-                var errorResponse = new 
-                {
-                    StatusCode = context.Response.StatusCode,
-                    Message = "An unexpected error occurred. Please try again later.",
-                    Details = ex.Message 
-                };
-
-                var json = JsonSerializer.Serialize(errorResponse, new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
-
-                await context.Response.WriteAsync(json);
+                _logger.LogError(ex, $"Something went wrong: {ex.Message}");
+                await HandleExceptionAsync(context, ex);
             }
         }
+
+        private static async Task HandleExceptionAsync(HttpContext context, Exception ex)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            var response = new ApiResponse<string>
+            {
+                IsSuccess = false,
+                Data = null,
+                Message = "Exception Occured",
+                Errors = new List<ApiError>
+            {
+                new ApiError
+                {
+                    StatusCode = context.Response.StatusCode,
+                    Message = "Internal Server Error",
+                    Details = ex.Message, 
+                    Date = DateTime.UtcNow
+                }
+            }
+            };
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response, options));
+        }
     }
-}
+} 
