@@ -5,6 +5,7 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +23,12 @@ namespace WebApi.Controllers
     public class CustomHRIndex : ControllerBase
     {
         private readonly IIndexRepository<HrIndex> _indexRepository;
+        private readonly IMapper _mapper;
 
-        public CustomHRIndex(IIndexRepository<HrIndex> indexRepository)
+        public CustomHRIndex(IIndexRepository<HrIndex> indexRepository ,IMapper mapper)
         {
             _indexRepository = indexRepository;
+            _mapper = mapper;
         }
 
         // GET: api/CustomHRIndex
@@ -34,14 +37,10 @@ namespace WebApi.Controllers
         {
             ApiResponse<IEnumerable<HrIndexDto>> result = new ApiResponse<IEnumerable<HrIndexDto>>();
             var indices = await _indexRepository.GetAllAsync();
-            var dtoList = indices.Select(i => new HrIndexDto
-            {
-                arName = i.ArName,
-                enName = i.EnName
-            }).ToList();
+            var dtolistmapping = _mapper.Map<IEnumerable<HrIndex>,IEnumerable<HrIndexDto>>(indices);
             result.IsSuccess = true;
             result.Message = "Success";
-            result.Data = dtoList;
+            result.Data = dtolistmapping;
             result.Errors = new List<ApiError>();
             return Ok(result);
         }
