@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using WebApi.Data.Models;
 using WebApi.Models;
 
 namespace WebApi.Data.Context;
@@ -24,10 +25,11 @@ public partial class DexefdbSampleContext : DbContext
 
     }
     public virtual DbSet<HrIndex> HrIndices { get; set; }
+    public virtual DbSet<CompanyBranch> CompanyBranches { get; set; }
+    public virtual DbSet<Employee> Employees { get; set; }
+    public virtual DbSet<HrAsset> HrAssets { get; set; }
 
 
 
-   
 
-  
 }

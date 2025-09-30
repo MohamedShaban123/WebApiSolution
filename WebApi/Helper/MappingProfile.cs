@@ -9,8 +9,9 @@ namespace WebApi.Helper
         public MappingProfile()
         {
             // Mapping From HrIndex to HrIndexDto
-            CreateMap<HrIndex, HrIndexDto>().ForMember(dest=>dest.arName,option=>option.MapFrom(source=>source.ArName))
-                                            .ForMember(dest=>dest.enName,option=>option.MapFrom(source=>source.EnName));
+            CreateMap<HrIndex, HrIndexDto>().ForMember(dest => dest.arName, option => option.MapFrom(source => source.ArName))
+                                            .ForMember(dest => dest.enName, option => option.MapFrom(source => source.EnName));
+                                            
         }
     }
 }

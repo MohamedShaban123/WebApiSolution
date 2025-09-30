@@ -1,6 +1,6 @@
 ﻿using WebApi.Models;
 
-namespace WebApi.Repository
+namespace WebApi.Repository.IRepo
 {
     public interface IIndexRepository<T>
     {

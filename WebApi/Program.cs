@@ -5,7 +5,8 @@ using WebApi.Data.Context;
 using WebApi.Helper;
 using WebApi.Middlwares;
 using WebApi.Models;
-using WebApi.Repository;
+using WebApi.Repository.IRepo;
+using WebApi.Repository.Repo;
 
 namespace WebApi
 {
@@ -34,7 +35,7 @@ namespace WebApi
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-                    c.RoutePrefix = string.Empty; // 👈 ده معناه Swagger UI يفتح على "/"
+                    c.RoutePrefix = string.Empty; 
                 });
             }
             if (app.Environment.IsDevelopment())

@@ -14,7 +14,7 @@ using WebApi.Data.Context;
 using WebApi.Dtos;
 using WebApi.Errors;
 using WebApi.Models;
-using WebApi.Repository;
+using WebApi.Repository.IRepo;
 
 namespace WebApi.Controllers
 {

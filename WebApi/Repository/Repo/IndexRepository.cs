@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApi.Data.Context;
 using WebApi.Models;
+using WebApi.Repository.IRepo;
 
-namespace WebApi.Repository
+namespace WebApi.Repository.Repo
 {
     public class IndexRepository : IIndexRepository<HrIndex>
     {
