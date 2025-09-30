@@ -47,7 +47,7 @@ namespace WebApi.Controllers
 
         // GET: api/CustomHRIndex/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<HrIndexDto>> GetHrIndex(int id)
+        public async Task<ActionResult<HrIndexDto>> GetHrIndexById(int id)
         {
             ApiResponse<HrIndexDto> result = new ApiResponse<HrIndexDto>();
             var index = await _indexRepository.GetByIdAsync(id);
@@ -75,7 +75,7 @@ namespace WebApi.Controllers
         // PUT: api/CustomHRIndex/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutHrIndex(int id, HrIndex hrIndex)
+        public async Task<IActionResult> UpdateHrIndex(int id, HrIndex hrIndex)
         {
             ApiResponse<HrIndex> result = new ApiResponse<HrIndex>();
 
@@ -104,7 +104,7 @@ namespace WebApi.Controllers
 
         // POST: api/CustomHRIndex
         [HttpPost]
-        public async Task<ActionResult<HrIndexDto>> PostHrIndex(HrIndexDto hrIndex)
+        public async Task<ActionResult<HrIndexDto>> AddHrIndex(HrIndexDto hrIndex)
         {
             ApiResponse<HrIndexDto> result = new ApiResponse<HrIndexDto>();
             var index = await _indexRepository.AddAsync(new HrIndex { ArName=hrIndex.arName,EnName=hrIndex.enName});

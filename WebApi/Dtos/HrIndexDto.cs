@@ -8,6 +8,5 @@ namespace WebApi.Dtos
         public string? arName { get; set; }
         [MaxLength(150)]
         public string? enName { get; set; }
-
     }
 }
