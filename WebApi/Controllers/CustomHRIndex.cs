@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing.Text;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -35,7 +36,6 @@ namespace WebApi.Controllers
             var indices = await _indexRepository.GetAllAsync();
             var dtoList = indices.Select(i => new HrIndexDto
             {
-                Id = i.Id,
                 arName = i.ArName,
                 enName = i.EnName
             }).ToList();
@@ -67,7 +67,7 @@ namespace WebApi.Controllers
             {
                 result.IsSuccess = true;
                 result.Message = "id already exist";
-                result.Data = new HrIndexDto { Id=index.Id,arName=index.ArName,enName=index.EnName};
+                result.Data = new HrIndexDto {arName=index.ArName,enName=index.EnName};
                 result.Errors = new List<ApiError>();
                 return Ok(result);
             }
@@ -105,10 +105,10 @@ namespace WebApi.Controllers
 
         // POST: api/CustomHRIndex
         [HttpPost]
-        public async Task<ActionResult<HrIndex>> PostHrIndex(HrIndex hrIndex)
+        public async Task<ActionResult<HrIndexDto>> PostHrIndex(HrIndexDto hrIndex)
         {
-            ApiResponse<HrIndex> result = new ApiResponse<HrIndex>();
-            var index = await _indexRepository.AddAsync(hrIndex);
+            ApiResponse<HrIndexDto> result = new ApiResponse<HrIndexDto>();
+            var index = await _indexRepository.AddAsync(new HrIndex { ArName=hrIndex.arName,EnName=hrIndex.enName});
             if (index == null)
             {
                 result.IsSuccess = false;
@@ -121,7 +121,7 @@ namespace WebApi.Controllers
             {
                 result.IsSuccess = true;
                 result.Message = "add successfully";
-                result.Data = index;
+                result.Data = new HrIndexDto { arName=index.ArName,enName=index.EnName};
                 result.Errors = new List<ApiError>();
                 return Ok(result);
             }
