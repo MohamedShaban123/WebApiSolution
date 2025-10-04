@@ -2,11 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.Controllers;
 using WebApi.Data.Context;
+using WebApi.Data.Models;
 using WebApi.Helper;
 using WebApi.Middlwares;
 using WebApi.Models;
 using WebApi.Repository.IRepo;
 using WebApi.Repository.Repo;
+using WebApi.Repository.Repositories;
 
 namespace WebApi
 {
@@ -28,7 +30,10 @@ namespace WebApi
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<DexefdbSampleContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            builder.Services.AddScoped<IIndexRepository<HrIndex>, IndexRepository>();
+            builder.Services.AddScoped<IGenericRepository<HrIndex>, IndexRepository>();
+            builder.Services.AddScoped<IGenericRepository<HrAsset>, AssetRepository>();
+            builder.Services.AddScoped<IGenericRepository<Employee>, EmployeeRepository>();
+            builder.Services.AddScoped<IGenericRepository<CompanyBranch>, BranchRepository>();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
             var app = builder.Build();
             // Configure the HTTP request pipeline.

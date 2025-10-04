@@ -5,7 +5,7 @@ using WebApi.Repository.IRepo;
 
 namespace WebApi.Repository.Repo
 {
-    public class IndexRepository : IIndexRepository<HrIndex>
+    public class IndexRepository : IGenericRepository<HrIndex>
     {
         private readonly DexefdbSampleContext _dbContext;
 

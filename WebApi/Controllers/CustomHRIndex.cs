@@ -24,13 +24,13 @@ namespace WebApi.Controllers
     [ApiController]
     public class CustomHRIndex : ControllerBase
     {
-        private readonly IIndexRepository<HrIndex> _indexRepository;
+        private readonly IGenericRepository<HrIndex> _indexRepository;
         private readonly IMapper _mapper;
 
 
 
 
-        public CustomHRIndex(IIndexRepository<HrIndex> indexRepository ,IMapper mapper)
+        public CustomHRIndex(IGenericRepository<HrIndex> indexRepository ,IMapper mapper)
         {
             _indexRepository = indexRepository;
             _mapper = mapper;
