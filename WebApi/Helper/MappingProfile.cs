@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using WebApi.Dtos;
+using WebApi.Enums;
 using WebApi.Models;
 
 namespace WebApi.Helper
@@ -8,10 +9,17 @@ namespace WebApi.Helper
     {
         public MappingProfile()
         {
-            // Mapping From HrIndex to HrIndexDto
-            CreateMap<HrIndex, HrIndexDto>().ForMember(dest => dest.arName, option => option.MapFrom(source => source.ArName))
-                                            .ForMember(dest => dest.enName, option => option.MapFrom(source => source.EnName));
-                                            
+           
+            CreateMap<HrIndex, HrIndexDto>()
+             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+             .ForMember(dest => dest.arName, opt => opt.MapFrom(src => src.ArName))
+             .ForMember(dest => dest.indexType, opt => opt.MapFrom(src => ParseIndexType(src.IndexType)))
+             .ReverseMap();
+        }
+
+        private static IndexType ParseIndexType(string? indexType)
+        {
+            return Enum.TryParse<IndexType>(indexType, true, out var result) ? result : IndexType.Unknown;
         }
     }
 }

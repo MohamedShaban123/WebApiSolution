@@ -6,12 +6,14 @@ using System.Linq;
 using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 using AutoMapper;
+using Humanizer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data.Context;
 using WebApi.Dtos;
+using WebApi.Enums;
 using WebApi.Errors;
 using WebApi.Models;
 using WebApi.Repository.IRepo;
@@ -25,11 +27,17 @@ namespace WebApi.Controllers
         private readonly IIndexRepository<HrIndex> _indexRepository;
         private readonly IMapper _mapper;
 
+
+
+
         public CustomHRIndex(IIndexRepository<HrIndex> indexRepository ,IMapper mapper)
         {
             _indexRepository = indexRepository;
             _mapper = mapper;
         }
+
+
+
 
         // GET: api/CustomHRIndex
         [HttpGet]
@@ -44,6 +52,8 @@ namespace WebApi.Controllers
             result.Errors = new List<ApiError>();
             return Ok(result);
         }
+
+
 
         // GET: api/CustomHRIndex/5
         [HttpGet("{id}")]
@@ -66,18 +76,18 @@ namespace WebApi.Controllers
             {
                 result.IsSuccess = true;
                 result.Message = "id already exist";
-                result.Data = new HrIndexDto {arName=index.ArName,enName=index.EnName};
+                result.Data = _mapper.Map<HrIndex,HrIndexDto>(index);
                 result.Errors = new List<ApiError>();
                 return Ok(result);
             }
         }
 
-        // PUT: api/CustomHRIndex/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //// PUT: api/CustomHRIndex/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateHrIndex(int id, HrIndex hrIndex)
+        public async Task<IActionResult> UpdateHrIndex(int id, HrIndexDto hrIndex)
         {
-            ApiResponse<HrIndex> result = new ApiResponse<HrIndex>();
+            ApiResponse<HrIndexDto> result = new ApiResponse<HrIndexDto>();
 
             if (id != hrIndex.Id)
             {
@@ -89,14 +99,15 @@ namespace WebApi.Controllers
             }
             else
             {
-                var isUpdate = await _indexRepository.UpdateAsync(hrIndex);
+
+                var isUpdate = await _indexRepository.UpdateAsync(_mapper.Map<HrIndexDto,HrIndex>(hrIndex));
                 if (isUpdate)
                 {
                     result.IsSuccess = true;
                     result.Message = "updated successfully";
                     result.Data = null;
                     result.Errors = new List<ApiError>();
-                    
+
                 }
                 return Ok(result);
             }
@@ -107,23 +118,38 @@ namespace WebApi.Controllers
         public async Task<ActionResult<HrIndexDto>> AddHrIndex(HrIndexDto hrIndex)
         {
             ApiResponse<HrIndexDto> result = new ApiResponse<HrIndexDto>();
-            var index = await _indexRepository.AddAsync(new HrIndex { ArName=hrIndex.arName,EnName=hrIndex.enName});
-            if (index == null)
+            if (!Enum.IsDefined(typeof(IndexType), hrIndex.indexType))
             {
+                var allowed = string.Join(", ", Enum.GetNames(typeof(IndexType)));
                 result.IsSuccess = false;
-                result.Message = "Problem occured while add hrIndex";
-                result.Data=null;
-                result.Errors = new List<ApiError>() { new ApiError { StatusCode=400,Message="bad request",Details="check you match validation or not"} };
+                result.Message = $"Invalid indexType value. Allowed values: {allowed}";
+                result.Data = null;
+                result.Errors = new List<ApiError>() { new ApiError { StatusCode = 400, Message = "bad request", Details = "check you match validation or not" } };
                 return Ok(result);
             }
             else
             {
-                result.IsSuccess = true;
-                result.Message = "add successfully";
-                result.Data = new HrIndexDto { arName=index.ArName,enName=index.EnName};
-                result.Errors = new List<ApiError>();
-                return Ok(result);
+                var index = await _indexRepository.AddAsync(_mapper.Map<HrIndexDto, HrIndex>(hrIndex));
+                if (index == null)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Problem occured while add hrIndex";
+                    result.Data = null;
+                    result.Errors = new List<ApiError>() { new ApiError { StatusCode = 400, Message = "bad request", Details = "check you match validation or not" } };
+                    return Ok(result);
+                }
+                else
+                {
+                    result.IsSuccess = true;
+                    result.Message = "add successfully";
+                    result.Data = new HrIndexDto { Id = index.Id, arName = index.ArName, indexType = hrIndex.indexType };
+                    result.Errors = new List<ApiError>();
+                    return Ok(result);
+                }
             }
+
+
+
         }
 
         // DELETE: api/CustomHRIndex/5
