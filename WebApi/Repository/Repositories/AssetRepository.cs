@@ -85,7 +85,6 @@ namespace WebApi.Repository.Repositories
 
         public async Task<bool> UpdateAsync(HrAsset entity)
         {
-
             var asset = await GetByIdAsync(entity.Id);
             if (asset == null)
             {
@@ -94,14 +93,21 @@ namespace WebApi.Repository.Repositories
             else
             {
                 try
-
                 {
                     asset.Name = entity.Name;
                     asset.DtAssigned = entity.DtAssigned;
                     asset.DtReturned = entity.DtReturned;
                     asset.Note = entity.Note;
                     asset.BranchId = entity.BranchId;
-                    asset.ModifiedOn = entity.ModifiedOn;
+                    asset.Txt1 = entity.Txt1;
+                    asset.Txt2 = entity.Txt2;
+                    asset.Txt3 = entity.Txt3;
+                    asset.Txt4 = entity.Txt4;
+                    asset.Txt5 = entity.Txt5;
+                    asset.Txt6 = entity.Txt6;
+                    asset.Txt7 = entity.Txt7;
+                    asset.Txt8 = entity.Txt8;
+                    asset.ModifiedOn = DateTime.UtcNow;
                     await _dbContext.SaveChangesAsync();
                     return true;
                 }

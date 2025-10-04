@@ -116,8 +116,6 @@ namespace WebApi.Controllers
 
                 return Ok(result);
             }
-
-
              var asset = await _assetRepository.AddAsync(_mapper.Map<HrAssetDto,HrAsset>(hrAsset));
                 result.IsSuccess = true;
                 result.Message = "add successfully";
@@ -125,6 +123,7 @@ namespace WebApi.Controllers
                 result.Errors = new List<ApiError>();
                 return Ok(result);       
         }
+
 
 
 
@@ -162,7 +161,6 @@ namespace WebApi.Controllers
         public async Task<IActionResult> UpdateHrAsset(int id, HrAssetDto hrAsset)
         {
             ApiResponse<HrAssetDto> result = new ApiResponse<HrAssetDto>();
-
             if (id != hrAsset.Id)
             {
                 result.IsSuccess = false;
@@ -173,6 +171,24 @@ namespace WebApi.Controllers
             }
             else
             {
+                var employee = await _employeeRepository.GetByIdAsync(hrAsset.EmplId);
+                if (employee is null)
+                {
+                    result.IsSuccess = false;
+                    result.Message = $"The employee with ID {hrAsset.EmplId} does not exist.";
+                    result.Data = null;
+                    result.Errors = new List<ApiError>() { new ApiError { StatusCode = 400, Message = "bad request", Details = $"The employee with ID {hrAsset.EmplId} does not exist. Please provide a valid Employee ID." } };
+                    return Ok(result);
+                }
+                var branch = await _branchRepository.GetByIdAsync(hrAsset.BranchId);
+                if (branch is null)
+                {
+                    result.IsSuccess = false;
+                    result.Message = $"The branch with ID {hrAsset.BranchId} does not exist.";
+                    result.Data = null;
+                    result.Errors = new List<ApiError>() { new ApiError { StatusCode = 400, Message = "bad request", Details = $"The branch with ID {hrAsset.BranchId} does not exist. Please provide a valid Branch ID." } };
+                    return Ok(result);
+                }
 
                 var isUpdate = await _assetRepository.UpdateAsync(_mapper.Map<HrAssetDto,HrAsset>(hrAsset));
                 if (isUpdate)
