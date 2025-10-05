@@ -9,7 +9,8 @@ using WebApi.Models;
 using WebApi.Repository.IRepo;
 using WebApi.Repository.Repo;
 using WebApi.Repository.Repositories;
-
+using WebApi.Services.Implementations;
+using WebApi.Services.Interfaces;
 namespace WebApi
 {
     public class Program
@@ -34,6 +35,8 @@ namespace WebApi
             builder.Services.AddScoped<IGenericRepository<HrAsset>, AssetRepository>();
             builder.Services.AddScoped<IGenericRepository<Employee>, EmployeeRepository>();
             builder.Services.AddScoped<IGenericRepository<CompanyBranch>, BranchRepository>();
+            builder.Services.AddScoped<IHrIndexService, HrIndexService>();
+            builder.Services.AddScoped<IHrAssetService, HrAssetService>();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
             var app = builder.Build();
             // Configure the HTTP request pipeline.

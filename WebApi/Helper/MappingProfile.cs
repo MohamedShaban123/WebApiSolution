@@ -9,14 +9,12 @@ namespace WebApi.Helper
     public class MappingProfile : Profile
     {
         public MappingProfile()
-        {
-           
+        {           
             CreateMap<HrIndex, HrIndexDto>()
              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
              .ForMember(dest => dest.arName, opt => opt.MapFrom(src => src.ArName))
              .ForMember(dest => dest.indexType, opt => opt.MapFrom(src => ParseIndexType(src.IndexType)))
              .ReverseMap();
-
             CreateMap<HrAsset, HrAssetDto>().ReverseMap();
 
         }
