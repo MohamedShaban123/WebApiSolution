@@ -84,7 +84,7 @@ namespace WebApi.Controllers
 
         // POST: api/CustomHRIndex
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<HrIndexDto>>> AddHrIndex(HrIndexDto hrIndex)
+        public async Task<ActionResult<ApiResponse<HrIndexDto>>> AddHrIndex([FromBody] HrIndexDto hrIndex)
         {
             var response = await _hrIndexService.AddHrIndexServiceAsync(hrIndex);
             return Ok(response);

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Controllers;
 using WebApi.Data.Context;
 using WebApi.Data.Models;
+using WebApi.Errors;
 using WebApi.Helper;
 using WebApi.Middlwares;
 using WebApi.Models;
@@ -38,6 +40,37 @@ namespace WebApi
             builder.Services.AddScoped<IHrIndexService, HrIndexService>();
             builder.Services.AddScoped<IHrAssetService, HrAssetService>();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var errors = context.ModelState
+                        .Where(e => e.Value.Errors.Count > 0)
+                        .SelectMany(e => e.Value.Errors.Select(err => new ApiError
+                        {
+                            StatusCode = StatusCodes.Status400BadRequest,
+                            Message = err.ErrorMessage,
+                            Details = string.IsNullOrEmpty(e.Key) || e.Key == "$"
+                                      ? "JSON Parsing Error"
+                                      : $"Field: {e.Key}",
+                            Date = DateTime.UtcNow
+                        }))
+                        .ToList();
+
+                    var response = new ApiResponse<object>
+                    {
+                        IsSuccess = false,
+                        Message = "Validation failed",
+                        Errors = errors,
+                        Data = null
+                    };
+
+                    return new BadRequestObjectResult(response);
+                };
+            });
+
+
+
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             // Configure the HTTP request pipeline.

@@ -13,6 +13,6 @@ namespace WebApi.Dtos
 
         [Required]
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public IndexType indexType { get; set; }
+        public IndexType? indexType { get; set; }
     }
 }

@@ -72,7 +72,6 @@ namespace WebApi.Services.Implementations
                 result.Data = null;
                 result.Errors = new List<ApiError>();
                 return result;
-
             }
             else
             {
