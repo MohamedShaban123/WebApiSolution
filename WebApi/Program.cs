@@ -38,6 +38,7 @@ namespace WebApi
             builder.Services.AddScoped<IGenericRepository<CompanyBranch>, BranchRepository>();
             builder.Services.AddScoped<IHrIndexService, HrIndexService>();
             builder.Services.AddScoped<IHrAssetService, HrAssetService>();
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
             builder.Services.Configure<ApiBehaviorOptions>(options =>
             {

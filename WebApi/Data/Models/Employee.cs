@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace WebApi.Data.Models;
 
 
@@ -132,4 +133,6 @@ public partial class Employee
     public virtual HrIndex? Nationality { get; set; }
 
     public virtual HrIndex? Sector { get; set; }
+
+
 }

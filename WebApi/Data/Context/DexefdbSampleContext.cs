@@ -19,6 +19,11 @@ public partial class DexefdbSampleContext : DbContext
     {
     }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseLazyLoadingProxies();
+    }
+
     public virtual DbSet<CompanyBranch> CompanyBranches { get; set; }
 
     public virtual DbSet<Employee> Employees { get; set; }
@@ -312,13 +317,12 @@ public partial class DexefdbSampleContext : DbContext
                 .HasForeignKey(e => e.SectorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-           
-                entity.HasOne(e => e.Branch)
-                .WithMany()
-                .HasForeignKey(e => e.BranchId)
-                .OnDelete(DeleteBehavior.Restrict);
 
-
+                    modelBuilder.Entity<Employee>()
+                    .HasOne(e => e.Branch)
+                    .WithMany(b => b.Employees) 
+                    .HasForeignKey(e => e.BranchId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
 
         });

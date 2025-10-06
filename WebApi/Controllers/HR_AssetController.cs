@@ -37,7 +37,7 @@ namespace WebApi.Controllers
 
         // GET: api/CustomAsset/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<HrAssetDto>> GetHrAssetById(int id)
+        public async Task<ActionResult<ApiResponse<HrAssetDto>>> GetHrAssetById(int id)
         {
             var response = await _hrAssetService.GetHrAssetServiceByIdAsync(id);
             return Ok(response);
