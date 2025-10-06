@@ -11,7 +11,6 @@
         public string? RoName { get; set; }
         public string? ChName { get; set; }
         public string? RuName { get; set; }
-
         public string? Status { get; set; }
         public DateTime? Dt { get; set; }
         public decimal? Salary { get; set; }

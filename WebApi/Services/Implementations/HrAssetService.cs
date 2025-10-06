@@ -122,23 +122,50 @@ namespace WebApi.Services.Implementations
         public async Task<ApiResponse<HrAssetDto>> DeleteHrAssetServiceAsync(int id)
         {
             ApiResponse<HrAssetDto> result = new ApiResponse<HrAssetDto>();
-            var isDelete = await _assetRepository.DeleteAsync(id);
-            if (isDelete)
+
+            var employees = await _employeeRepository.GetAllAsync();
+            var branches = await _branchRepository.GetAllAsync();
+            var isAssetRecordReferenceEmployeeTable = employees?.Any(e =>e.HrAssets.Any(a=>a.Id==id));
+            var isAssetRecordReferenceToBranchTable = branches?.Any(b=>b.HrAssets.Any(a=>a.Id==id));
+
+            if (isAssetRecordReferenceEmployeeTable is true  || isAssetRecordReferenceToBranchTable is true)
             {
-                result.IsSuccess = true;
-                result.Message = "delete successfully";
+                result.IsSuccess = false;
+                result.Message = "Cannot delete this record because it is linked to other data.";
                 result.Data = null;
-                result.Errors = new List<ApiError>();
+                result.Errors = new List<ApiError>()
+                {
+                    new ApiError
+                    {
+                        StatusCode = 409,
+                        Message = "Conflict",
+                        Details = "This record is referenced by other tables. Deletion is not allowed."
+                    }
+                };
                 return result;
             }
             else
             {
-                result.IsSuccess = false;
-                result.Message = "id not exist";
-                result.Data = null;
-                result.Errors = new List<ApiError>() { new ApiError { StatusCode = 404, Message = "id not exist", Details = "id not exist " } };
-                return result;
+                var isDelete = await _assetRepository.DeleteAsync(id);
+                if (isDelete)
+                {
+                    result.IsSuccess = true;
+                    result.Message = "delete successfully";
+                    result.Data = null;
+                    result.Errors = new List<ApiError>();
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Message = "id not exist";
+                    result.Data = null;
+                    result.Errors = new List<ApiError>() { new ApiError { StatusCode = 404, Message = "id not exist", Details = "id not exist " } };
+                    return result;
+                }
             }
+
+            
 
         }
 

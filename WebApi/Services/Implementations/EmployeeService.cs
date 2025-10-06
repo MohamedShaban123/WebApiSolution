@@ -15,15 +15,18 @@ namespace WebApi.Services.Implementations
         private readonly IGenericRepository<Employee> _employeeRepository;
         private readonly IGenericRepository<HrIndex> _indexRepository;
         private readonly IGenericRepository<CompanyBranch> _branchRepository;
+        private readonly IGenericRepository<HrAsset> _assetRepository;
         private readonly IMapper _mapper;
 
         public EmployeeService(IGenericRepository<Employee> employeeRepository
             ,IGenericRepository<HrIndex> indexRepository,
-            IGenericRepository<CompanyBranch> branchRepository,IMapper mapper)
+            IGenericRepository<CompanyBranch> branchRepository,
+            IGenericRepository<HrAsset> assetRepository,IMapper mapper)
         {  
             _employeeRepository = employeeRepository;
             _indexRepository = indexRepository;
             _branchRepository = branchRepository;
+            _assetRepository = assetRepository;
             _mapper = mapper;
         }
 
@@ -169,23 +172,62 @@ namespace WebApi.Services.Implementations
         public async Task<ApiResponse<EmployeeDto>> DeleteEmployeeServiceAsync(int id)
         {
             ApiResponse<EmployeeDto> result = new ApiResponse<EmployeeDto>();
-            var isDelete = await _employeeRepository.DeleteAsync(id);
-            if (isDelete)
+            var indices = await _indexRepository.GetAllAsync();
+            var branches = await _branchRepository.GetAllAsync();
+            var assets = await _assetRepository.GetAllAsync();
+            var isEmployeeRecordReferenceBranchTable = branches?.Any(b=>b.Employees.Any(e=>e.Id==id));
+            var isEmployeeRecordReferenceAssetTable = assets?.Any(a=>a.EmplId==id);
+            var isEmployeeRecordReferenceIndexTable = indices?.Any(i=>i.EmployeeBloodTypes.Any(ebt=>ebt.Id==id) ||
+                                                                     i.EmployeeCities.Any(ebt => ebt.Id == id) ||
+                                                                     i.EmployeeDepartments.Any(ebt => ebt.Id == id) ||
+                                                                     i.EmployeeFaculties.Any(ebt => ebt.Id == id) ||
+                                                                     i.EmployeeJobs.Any(ebt => ebt.Id == id) ||
+                                                                     i.EmployeeMaritalStatuses.Any(ebt => ebt.Id == id) ||
+                                                                     i.EmployeeNationalities.Any(ebt => ebt.Id == id) ||
+                                                                      i.EmployeeSectors.Any(ebt => ebt.Id == id) 
+                                                                     );
+
+            if (isEmployeeRecordReferenceBranchTable is true || 
+                isEmployeeRecordReferenceAssetTable is true ||
+                isEmployeeRecordReferenceIndexTable is true
+                )
+
             {
-                result.IsSuccess = true;
-                result.Message = "delete successfully";
+                result.IsSuccess = false;
+                result.Message = "Cannot delete this record because it is linked to other data.";
                 result.Data = null;
-                result.Errors = new List<ApiError>();
+                result.Errors = new List<ApiError>()
+                {
+                    new ApiError
+                    {
+                        StatusCode = 409,
+                        Message = "Conflict",
+                        Details = "This record is referenced by other tables. Deletion is not allowed."
+                    }
+                };
                 return result;
             }
             else
             {
-                result.IsSuccess = false;
-                result.Message = "id not exist";
-                result.Data = null;
-                result.Errors = new List<ApiError>() { new ApiError { StatusCode = 404, Message = "id not exist", Details = "id not exist " } };
-                return result;
+                var isDelete = await _employeeRepository.DeleteAsync(id);
+                if (isDelete)
+                {
+                    result.IsSuccess = true;
+                    result.Message = "delete successfully";
+                    result.Data = null;
+                    result.Errors = new List<ApiError>();
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Message = "id not exist";
+                    result.Data = null;
+                    result.Errors = new List<ApiError>() { new ApiError { StatusCode = 404, Message = "id not exist", Details = "id not exist " } };
+                    return result;
+                }
             }
+               
 
         }
 

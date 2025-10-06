@@ -11,11 +11,15 @@ namespace WebApi.Services.Implementations
     public class HrIndexService : IHrIndexService
     {
         private readonly IGenericRepository<HrIndex> _indexRepository;
+        private readonly IGenericRepository<Employee> _employeeRepository;
         private readonly IMapper _mapper;
 
-        public HrIndexService(IGenericRepository<HrIndex> indexRepository, IMapper mapper)
+        public HrIndexService(IGenericRepository<HrIndex> indexRepository, 
+            IGenericRepository<Employee> employeeRepository,
+            IMapper mapper)
         {
             _indexRepository = indexRepository;
+            _employeeRepository = employeeRepository;
             _mapper = mapper;
         }
 
@@ -37,7 +41,7 @@ namespace WebApi.Services.Implementations
             ApiResponse<HrIndexDto> result = new ApiResponse<HrIndexDto>();
 
             var index = await _indexRepository.GetByIdAsync(id);
-
+            
             if (index == null)
             {
                 result.IsSuccess = false;
@@ -123,23 +127,57 @@ namespace WebApi.Services.Implementations
         public async Task<ApiResponse<HrIndexDto>> DeleteHrIndexServiceAsync(int id)
         {
             ApiResponse<HrIndexDto> result = new ApiResponse<HrIndexDto>();
-            var isDelete = await _indexRepository.DeleteAsync(id);
-            if (isDelete)
+            var employees = await _employeeRepository.GetAllAsync();
+            var isRecordReferenceToEmployeeTable = employees?.Any(e => e.NationalityId == id || 
+                                                            e.DepartmentId == id ||
+                                                            e.JobId == id || 
+                                                            e.BranchId == id ||
+                                                            e.MaritalStatusId == id ||
+                                                            e.BloodTypeId==id || 
+                                                            e.FacultyId==id ||
+                                                            e.SectorId == id);
+
+
+            if (isRecordReferenceToEmployeeTable is true  )
             {
-                result.IsSuccess = true;
-                result.Message = "delete successfully";
+                result.IsSuccess = false;
+                result.Message = "Cannot delete this record because it is linked to other data.";
                 result.Data = null;
-                result.Errors = new List<ApiError>();
+                result.Errors = new List<ApiError>()
+                {
+                    new ApiError
+                    {
+                        StatusCode = 409,
+                        Message = "Conflict",
+                        Details = "This record is referenced by other tables. Deletion is not allowed."
+                    }
+                };
                 return result;
             }
             else
             {
-                result.IsSuccess = false;
-                result.Message = "id not exist";
-                result.Data = null;
-                result.Errors = new List<ApiError>() { new ApiError { StatusCode = 404, Message = "id not exist", Details = "id not exist " } };
-                return result;
+                var isDelete = await _indexRepository.DeleteAsync(id);
+                if (isDelete)
+                {
+                    result.IsSuccess = true;
+                    result.Message = "delete successfully";
+                    result.Data = null;
+                    result.Errors = new List<ApiError>();
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Message = "id not exist";
+                    result.Data = null;
+                    result.Errors = new List<ApiError>() { new ApiError { StatusCode = 404, Message = "id not exist", Details = "id not exist " } };
+                    return result;
+                }
+
             }
+
+
+
         }
 
       

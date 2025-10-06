@@ -62,4 +62,6 @@ public partial class HrIndex
     public virtual ICollection<Employee> EmployeeNationalities { get; set; } = new List<Employee>();
 
     public virtual ICollection<Employee> EmployeeSectors { get; set; } = new List<Employee>();
+
+
 }
