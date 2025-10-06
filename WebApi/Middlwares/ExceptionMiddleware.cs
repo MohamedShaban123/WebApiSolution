@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Net;
 using System.Text.Json;
 using WebApi.Errors;
 
@@ -20,6 +22,29 @@ namespace WebApi.Middlwares
             try
             {
                 await _next(context);
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is SqlException sqlEx)
+            {
+
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsJsonAsync(new ApiResponse<string>
+                {
+                    IsSuccess = false,
+                    Data = null,
+                    Message = "This record cannot be deleted because it is referenced by other data.",
+                    Errors = new List<ApiError>
+                            {
+                                new ApiError
+                                {
+                                    StatusCode = StatusCodes.Status400BadRequest,
+                                    Message = "Delete constraint violation",
+                                    Details = "This record is being used in another table and cannot be removed.",
+                                    Date = DateTime.UtcNow
+                                }
+                            }
+                });
+
+
             }
             catch (Exception ex)
             {
@@ -43,7 +68,7 @@ namespace WebApi.Middlwares
                 {
                     StatusCode = context.Response.StatusCode,
                     Message = "Internal Server Error",
-                    Details = ex.Message, 
+                    Details = ex.Message,
                     Date = DateTime.UtcNow
                 }
             }
@@ -52,4 +77,4 @@ namespace WebApi.Middlwares
             await context.Response.WriteAsync(JsonSerializer.Serialize(response, options));
         }
     }
-} 
+}

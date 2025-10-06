@@ -6,6 +6,8 @@ namespace WebApi.Data.Context;
 
 
 
+
+
 public partial class DexefdbSampleContext : DbContext
 {
     public DexefdbSampleContext()
@@ -24,6 +26,7 @@ public partial class DexefdbSampleContext : DbContext
     public virtual DbSet<HrAsset> HrAssets { get; set; }
 
     public virtual DbSet<HrIndex> HrIndices { get; set; }
+
 
 
 
@@ -221,9 +224,103 @@ public partial class DexefdbSampleContext : DbContext
                 .HasDefaultValue("");
             entity.Property(e => e.Writtenby).HasMaxLength(50);
 
+            entity.HasOne(d => d.BloodType).WithMany(p => p.EmployeeBloodTypes)
+                .HasForeignKey(d => d.BloodTypeId)
+                .HasConstraintName("FK_Employees_BloodTypeID");
+
             entity.HasOne(d => d.Branch).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.BranchId)
                 .HasConstraintName("FK_Employees_BranchID");
+
+            entity.HasOne(d => d.City).WithMany(p => p.EmployeeCities)
+                .HasForeignKey(d => d.CityId)
+                .HasConstraintName("FK_Employees_CityId");
+
+            entity.HasOne(d => d.Department).WithMany(p => p.EmployeeDepartments)
+                .HasForeignKey(d => d.DepartmentId)
+                .HasConstraintName("FK_Employees_DepartmentID");
+
+            entity.HasOne(d => d.Faculty).WithMany(p => p.EmployeeFaculties)
+                .HasForeignKey(d => d.FacultyId)
+                .HasConstraintName("FK_Employees_FacultyID");
+
+            entity.HasOne(d => d.Job).WithMany(p => p.EmployeeJobs)
+                .HasForeignKey(d => d.JobId)
+                .HasConstraintName("FK_Employees_JobID");
+
+            entity.HasOne(d => d.MaritalStatus).WithMany(p => p.EmployeeMaritalStatuses)
+                .HasForeignKey(d => d.MaritalStatusId)
+                .HasConstraintName("FK_Employees_MaritalStatusID");
+
+            entity.HasOne(d => d.Nationality).WithMany(p => p.EmployeeNationalities)
+                .HasForeignKey(d => d.NationalityId)
+                .HasConstraintName("FK_Employees_NationalityID");
+
+            entity.HasOne(d => d.Sector).WithMany(p => p.EmployeeSectors)
+                .HasForeignKey(d => d.SectorId)
+                .HasConstraintName("FK_Employees_SectorID");
+
+
+
+
+
+            entity.HasOne(e => e.BloodType)
+                .WithMany(h => h.EmployeeBloodTypes)
+                .HasForeignKey(e => e.BloodTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+
+            entity.HasOne(e => e.City)
+                .WithMany(h => h.EmployeeCities)
+                .HasForeignKey(e => e.CityId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            entity.HasOne(e => e.Department)
+                .WithMany(h => h.EmployeeDepartments)
+                .HasForeignKey(e => e.DepartmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+
+            entity.HasOne(e => e.Faculty)
+                .WithMany(h => h.EmployeeFaculties)
+                .HasForeignKey(e => e.FacultyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+
+            entity.HasOne(e => e.Job)
+                .WithMany(h => h.EmployeeJobs)
+                .HasForeignKey(e => e.JobId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            entity.HasOne(e => e.MaritalStatus)
+                .WithMany(h => h.EmployeeMaritalStatuses)
+                .HasForeignKey(e => e.MaritalStatusId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Nationality)
+                .WithMany(h => h.EmployeeNationalities)
+                .HasForeignKey(e => e.NationalityId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Sector)
+                .WithMany(h => h.EmployeeSectors)
+                .HasForeignKey(e => e.SectorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+           
+                entity.HasOne(e => e.Branch)
+                .WithMany()
+                .HasForeignKey(e => e.BranchId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+
+
         });
 
         modelBuilder.Entity<HrAsset>(entity =>
@@ -335,6 +432,8 @@ public partial class DexefdbSampleContext : DbContext
                 .HasMaxLength(150)
                 .HasDefaultValue("");
             entity.Property(e => e.Writtenby).HasMaxLength(50);
+
+
         });
 
         OnModelCreatingPartial(modelBuilder);

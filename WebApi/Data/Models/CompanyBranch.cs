@@ -131,7 +131,7 @@ public partial class CompanyBranch
     public DateTime? CreatedOn { get; set; }
 
     public DateTime? ModifiedOn { get; set; }
-        
+
     public bool Attach { get; set; }
 
     public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();

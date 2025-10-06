@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-
 namespace WebApi.Data.Models;
+
+
 
 public partial class Employee
 {
@@ -44,6 +45,7 @@ public partial class Employee
     public string? Writtenby { get; set; }
 
     public string? FingerPrintNumber { get; set; }
+
 
     public string? Mob1 { get; set; }
 
@@ -109,7 +111,25 @@ public partial class Employee
 
     public int? SectorId { get; set; }
 
+
+
+    public virtual HrIndex? BloodType { get; set; }
+
     public virtual CompanyBranch? Branch { get; set; }
 
+    public virtual HrIndex? City { get; set; }
+
+    public virtual HrIndex? Department { get; set; }
+
+    public virtual HrIndex? Faculty { get; set; }
+
     public virtual ICollection<HrAsset> HrAssets { get; set; } = new List<HrAsset>();
+
+    public virtual HrIndex? Job { get; set; }
+
+    public virtual HrIndex? MaritalStatus { get; set; }
+
+    public virtual HrIndex? Nationality { get; set; }
+
+    public virtual HrIndex? Sector { get; set; }
 }

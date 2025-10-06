@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+
 namespace WebApi.Data.Models;
-
-
 
 public partial class HrIndex
 {
@@ -47,4 +46,20 @@ public partial class HrIndex
     public DateTime? CreatedOn { get; set; }
 
     public DateTime? ModifiedOn { get; set; }
+
+    public virtual ICollection<Employee> EmployeeBloodTypes { get; set; } = new List<Employee>();
+
+    public virtual ICollection<Employee> EmployeeCities { get; set; } = new List<Employee>();
+
+    public virtual ICollection<Employee> EmployeeDepartments { get; set; } = new List<Employee>();
+
+    public virtual ICollection<Employee> EmployeeFaculties { get; set; } = new List<Employee>();
+
+    public virtual ICollection<Employee> EmployeeJobs { get; set; } = new List<Employee>();
+
+    public virtual ICollection<Employee> EmployeeMaritalStatuses { get; set; } = new List<Employee>();
+
+    public virtual ICollection<Employee> EmployeeNationalities { get; set; } = new List<Employee>();
+
+    public virtual ICollection<Employee> EmployeeSectors { get; set; } = new List<Employee>();
 }
