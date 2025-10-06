@@ -15,7 +15,6 @@ using WebApi.Data.Context;
 using WebApi.Dtos;
 using WebApi.Enums;
 using WebApi.Errors;
-using WebApi.Models;
 using WebApi.Repository.IRepo;
 using WebApi.Services.Interfaces;
 
@@ -84,7 +83,7 @@ namespace WebApi.Controllers
 
         // POST: api/CustomHRIndex
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<HrIndexDto>>> AddHrIndex([FromBody] HrIndexDto hrIndex)
+        public async Task<ActionResult<ApiResponse<HrIndexDto>>> AddHrIndex([FromBody] HrIndexDtoPost hrIndex)
         {
             var response = await _hrIndexService.AddHrIndexServiceAsync(hrIndex);
             return Ok(response);

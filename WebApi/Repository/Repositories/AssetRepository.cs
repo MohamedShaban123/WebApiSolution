@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApi.Data.Context;
 using WebApi.Data.Models;
-using WebApi.Models;
 using WebApi.Repository.IRepo;
 
 namespace WebApi.Repository.Repositories

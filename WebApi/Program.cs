@@ -7,7 +7,6 @@ using WebApi.Data.Models;
 using WebApi.Errors;
 using WebApi.Helper;
 using WebApi.Middlwares;
-using WebApi.Models;
 using WebApi.Repository.IRepo;
 using WebApi.Repository.Repo;
 using WebApi.Repository.Repositories;

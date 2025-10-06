@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-namespace WebApi.Models;
+namespace WebApi.Data.Models;
+
 
 
 public partial class HrIndex

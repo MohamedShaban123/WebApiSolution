@@ -1,5 +1,4 @@
-﻿using WebApi.Models;
-
+﻿
 namespace WebApi.Repository.IRepo
 {
     public interface IGenericRepository<T>

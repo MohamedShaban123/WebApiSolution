@@ -5,7 +5,6 @@ using WebApi.Data.Models;
 using WebApi.Dtos;
 using WebApi.Enums;
 using WebApi.Errors;
-using WebApi.Models;
 using WebApi.Repository.IRepo;
 using WebApi.Repository.Repo;
 using WebApi.Services.Interfaces;
@@ -49,7 +48,7 @@ namespace WebApi.Controllers
 
         // POST: api/CustomAsset
         [HttpPost]
-        public async Task<ActionResult<HrAssetDto>> AddHrAsset(HrAssetDto hrAsset)
+        public async Task<ActionResult<HrAssetDto>> AddHrAsset(HrAssetDtoPost hrAsset)
         {
             var response = await _hrAssetService.AddHrAssetServiceAsync(hrAsset);
             return Ok(response);

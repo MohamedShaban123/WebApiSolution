@@ -110,4 +110,6 @@ public partial class Employee
     public int? SectorId { get; set; }
 
     public virtual CompanyBranch? Branch { get; set; }
+
+    public virtual ICollection<HrAsset> HrAssets { get; set; } = new List<HrAsset>();
 }

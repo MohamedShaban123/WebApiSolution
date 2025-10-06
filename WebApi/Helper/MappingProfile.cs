@@ -2,7 +2,6 @@
 using WebApi.Data.Models;
 using WebApi.Dtos;
 using WebApi.Enums;
-using WebApi.Models;
 
 namespace WebApi.Helper
 {
@@ -15,7 +14,15 @@ namespace WebApi.Helper
              .ForMember(dest => dest.arName, opt => opt.MapFrom(src => src.ArName))
              .ForMember(dest => dest.indexType, opt => opt.MapFrom(src => ParseIndexType(src.IndexType)))
              .ReverseMap();
+            CreateMap<HrIndex, HrIndexDtoPost>()
+            .ForMember(dest => dest.arName, opt => opt.MapFrom(src => src.ArName))
+            .ForMember(dest => dest.indexType, opt => opt.MapFrom(src => ParseIndexType(src.IndexType)))
+            .ReverseMap();
+
+
+
             CreateMap<HrAsset, HrAssetDto>().ReverseMap();
+            CreateMap<HrAsset, HrAssetDtoPost>().ReverseMap();
 
         }
 

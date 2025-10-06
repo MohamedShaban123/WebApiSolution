@@ -70,7 +70,7 @@ namespace WebApi.Services.Implementations
 
 
 
-        public async Task<ApiResponse<HrAssetDto?>> AddHrAssetServiceAsync(HrAssetDto entity)
+        public async Task<ApiResponse<HrAssetDto?>> AddHrAssetServiceAsync(HrAssetDtoPost entity)
         {
             ApiResponse<HrAssetDto> result = new ApiResponse<HrAssetDto>();
 
@@ -105,7 +105,7 @@ namespace WebApi.Services.Implementations
 
                 return result;
             }
-            var asset = await _assetRepository.AddAsync(_mapper.Map<HrAssetDto, HrAsset>(entity));
+            var asset = await _assetRepository.AddAsync(_mapper.Map<HrAssetDtoPost, HrAsset>(entity));
             result.IsSuccess = true;
             result.Message = "add successfully";
             result.Data = _mapper.Map<HrAsset, HrAssetDto>(asset);

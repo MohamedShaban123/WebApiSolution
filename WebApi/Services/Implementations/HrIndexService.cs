@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using WebApi.Data.Models;
 using WebApi.Dtos;
 using WebApi.Enums;
 using WebApi.Errors;
-using WebApi.Models;
 using WebApi.Repository.IRepo;
 using WebApi.Services.Interfaces;
 
@@ -92,7 +92,7 @@ namespace WebApi.Services.Implementations
 
 
 
-        public async Task<ApiResponse<HrIndexDto?>> AddHrIndexServiceAsync(HrIndexDto entity)
+        public async Task<ApiResponse<HrIndexDto?>> AddHrIndexServiceAsync(HrIndexDtoPost entity)
         {
             ApiResponse<HrIndexDto> result = new ApiResponse<HrIndexDto>();
 
@@ -107,7 +107,7 @@ namespace WebApi.Services.Implementations
             }
             else
             {
-                    var index = await _indexRepository.AddAsync(_mapper.Map<HrIndexDto, HrIndex>(entity));
+                    var index = await _indexRepository.AddAsync(_mapper.Map<HrIndexDtoPost, HrIndex>(entity));
                     result.IsSuccess = true;
                     result.Message = "add successfully";
                     result.Data = new HrIndexDto { Id = index.Id, arName = index.ArName, indexType = entity.indexType  };
@@ -142,9 +142,7 @@ namespace WebApi.Services.Implementations
             }
         }
 
-
-
-    
+      
 
     }
 }

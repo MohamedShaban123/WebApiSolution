@@ -42,4 +42,8 @@ public partial class HrAsset
     public DateTime? CreatedOn { get; set; }
 
     public DateTime? ModifiedOn { get; set; }
+
+    public virtual CompanyBranch? Branch { get; set; }
+
+    public virtual Employee? Empl { get; set; }
 }
