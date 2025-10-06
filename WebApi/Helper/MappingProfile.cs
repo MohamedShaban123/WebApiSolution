@@ -40,7 +40,14 @@ namespace WebApi.Helper
                 .ForMember(dest => dest.CityName, opt => opt.MapFrom(src => src.City != null ? src.City.ArName : null))
                 .ReverseMap();
 
-    
+
+
+            CreateMap<EmployeeDtoPost, Employee>();
+               
+
+
+
+
 
 
         }

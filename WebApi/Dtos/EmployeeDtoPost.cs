@@ -52,15 +52,5 @@
         public int FacultyId { get; set; }
         public int SectorId { get; set; }
 
-        // Flattened Navigation Properties (Readable Names)
-        public string? BranchName { get; set; }
-        public string? DepartmentName { get; set; }
-        public string? JobName { get; set; }
-        public string? NationalityName { get; set; }
-        public string? MaritalStatusName { get; set; }
-        public string? BloodTypeName { get; set; }
-        public string? FacultyName { get; set; }
-        public string? SectorName { get; set; }
-        public string? CityName { get; set; }
     }
 }
